@@ -1,0 +1,614 @@
+import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo } from 'react';
+import somchaiAvatar from '../../assets/avatars/somchai.png';
+import somyingAvatar from '../../assets/avatars/somying.png';
+import somsakAvatar from '../../assets/avatars/somsak.png';
+import somjaiAvatar from '../../assets/avatars/somjai.png';
+import { useUser } from './UserContext';
+
+
+export interface Person {
+  id: string;
+  name: string;
+  avatar?: string;
+}
+
+export interface Activity {
+  id: string;
+  time: string;
+  location: string;
+  description: string;
+  day: number;
+  tags?: { label: string; type: 'ticket' | 'water' | 'powerbank' | 'card' | 'cash' | 'other' | 'passport' }[];
+}
+
+export interface Outfit {
+  id: string;
+  day: number;
+  dayName: string;
+  theme: string;
+  imageUrl: string;
+}
+
+export interface ActivityItem {
+  id: string;
+  name: string;
+  description: string;
+  category: 'outfit' | 'activity' | 'restaurant' | 'cafe' | 'other';
+  imageUrl?: string;
+  date?: string;
+}
+
+export interface Expense {
+  id: string;
+  name: string;
+  totalAmount: number;
+  paidBy: string;
+  splitAmong: string[];
+  amountPerPerson: number;
+  date: string;
+  category?: string;
+  isRepayment?: boolean;
+  repaymentFor?: string;
+}
+
+export interface TripData {
+  tripName: string;
+  startDate: Date;
+  people: Person[];
+  activities: Activity[];
+  outfits: Outfit[];
+  expenses: Expense[];
+  activityItems: ActivityItem[];
+}
+
+interface TripContextType {
+  tripData: TripData;
+  addExpense: (expense: Omit<Expense, 'id'>) => void;
+  addActivity: (activity: Omit<Activity, 'id'>) => void;
+  addOutfit: (outfit: Omit<Outfit, 'id'>) => void;
+  addActivityItem: (item: Omit<ActivityItem, 'id'>) => void;
+  updateActivity: (id: string, updates: Partial<Activity>) => void;
+  deleteExpense: (id: string) => void;
+  getCurrentActivity: () => Activity | null;
+  getExpensesByPerson: (personId: string) => Expense[];
+  getTotalPaidByPerson: (personId: string) => number;
+  shiftActivities: (hours: number) => void;
+  shiftDayActivities: (day: number, hours: number) => void;
+}
+
+const TripContext = createContext<TripContextType | undefined>(undefined);
+
+const STORAGE_KEY = 'trip-planner-data-hk-v5';
+
+const defaultData: TripData = {
+  tripName: 'Hong Kong 2026',
+  startDate: new Date('2026-03-22'),
+  people: [
+    { id: '1', name: 'แม่', avatar: somchaiAvatar },
+    { id: '2', name: 'ลูกนัท', avatar: somyingAvatar },
+    { id: '3', name: 'มุก', avatar: somsakAvatar },
+    { id: '4', name: 'สา', avatar: somjaiAvatar },
+  ],
+  activities: [
+
+    {
+      id: 'hk1',
+      day: 1,
+      time: '14:40',
+      location: 'สนามบิน HKG',
+      description: 'ใช้เวลาประมาณ 1 ชั่วโมงในการผ่าน ตม. และรับกระเป๋า',
+      tags: [
+        { label: 'ตั๋วเครื่องบิน', type: 'ticket' },
+        { label: 'พาสปอร์ต', type: 'passport' }
+      ],
+    },
+    {
+      id: 'hk2',
+      day: 1,
+      time: '16:00',
+      location: 'Citygate Outlets',
+      description: 'เดินทางโดยรถบัสมาฝากกระเป๋าที่ Citygate Outlets',
+      tags: [{ label: 'Octopus Card', type: 'card' }, { label: 'ตั๋วขึ้นกระเช้า', type: 'ticket' }],
+    },
+    {
+      id: 'hk3',
+      day: 1,
+      time: '16:35',
+      location: 'Ngong Ping 360',
+      description: 'นั่งกระเช้าขาขึ้น (Standard Cabin เร็วสุด)',
+      tags: [{ label: 'ตั๋วสำหรับเข้าชม', type: 'ticket' }],
+    },
+    {
+      id: 'hk4',
+      day: 1,
+      time: '17:05',
+      location: 'Ngong Ping & Big Buddha',
+      description: 'ขึ้นบันไดพระใหญ่ 268 ขั้น -> ลงบันได + วัดโป่หลิน -> Ngong Ping Village',
+      tags: [{ label: 'น้ำดื่ม', type: 'water' }],
+    },
+    {
+      id: 'hk5',
+      day: 1,
+      time: '18:00',
+      location: 'Ngong Ping 360 ขาลง',
+      description: 'นั่งกระเช้าขาลง รอบสุดท้าย',
+      tags: [],
+    },
+    {
+      id: 'hk6',
+      day: 1,
+      time: '18:55',
+      location: 'Best Western Plus Hotel Kowloon',
+      description: 'นั่งเต๋อเข้าโรงแรมพักผ่อน (Tung Chung -> Lai King -> Prince Edward -> Hung Hom)',
+      tags: [{ label: 'Octopus Card', type: 'card' }],
+    },
+    {
+      id: 'hk7',
+      day: 1,
+      time: '20:00',
+      location: 'Symphony of Lights',
+      description: 'ชมโชว์ Symphony of Lights ที่ Tsim Sha Tsui Promenade / Avenue of Stars',
+      tags: [{ label: 'PowerBank', type: 'powerbank' }],
+    },
+    {
+      id: 'hk8',
+      day: 1,
+      time: '20:30',
+      location: 'Master Beef Shabu',
+      description: 'ร้านชาบูเนื้อ สาขา Tsim Sha Tsui',
+      tags: [{ label: 'เงินสด', type: 'cash' }],
+    },
+    {
+      id: 'hk9',
+      day: 1,
+      time: '22:00',
+      location: 'Kai Kai Dessert (佳佳甜品)',
+      description: 'ร้านของหวานฮ่องกงแท้ๆ แนะนำ: งาดำ, เต้าฮวย, ซุปอัลมอนด์',
+      tags: [{ label: 'เงินสด', type: 'cash' }],
+    },
+    {
+      id: 'hk10',
+      day: 1,
+      time: '08:30',
+      location: 'Log Ye Dim Sum Restaurant',
+      description: 'อาหารเช้า ติ่มซำ - Tsim Sha Tsui',
+      tags: [{ label: 'เงินสด', type: 'cash' }],
+    },
+    {
+      id: 'hk11',
+      day: 1,
+      time: '09:30',
+      location: 'Nathan Road',
+      description: 'เดินเล่น ถ่ายรูปป้ายร้านค้า ซึมซับบรรยากาศฮ่องกงแท้',
+      tags: [{ label: 'น้ำดื่ม', type: 'water' }],
+    },
+    {
+      id: 'hk12',
+      day: 1,
+      time: '10:15',
+      location: 'K11 Art Mall',
+      description: 'เดินดูงานอาร์ต เข้าห้องน้ำ พักขา',
+      tags: [],
+    },
+    {
+      id: 'hk13',
+      day: 1,
+      time: '11:00',
+      location: 'Sasa & Lung Fung Mall',
+      description: 'ช็อปปิ้งเครื่องสำอาง ของฝาก ยาจีน',
+      tags: [{ label: 'เงินสด', type: 'cash' }],
+    },
+    {
+      id: 'hk14',
+      day: 1,
+      time: '12:00',
+      location: 'Best Mart 360',
+      description: 'ซื้อขนมฮ่องกง ช็อกโกแลต ของฝาก',
+      tags: [{ label: 'เงินสด', type: 'cash' }],
+    },
+    {
+      id: 'hk15',
+      day: 1,
+      time: '12:30',
+      location: 'Rapidfootwear (Kwun Tong)',
+      description: 'ไปดูรองเท้าที่ Kwun Tong (MTR สายสีเขียว)',
+      tags: [{ label: 'Octopus Card', type: 'card' }],
+    },
+    {
+      id: 'hk16',
+      day: 1,
+      time: '13:30',
+      location: 'Cheung Hing Kee Shanghai Pan Fried Bun',
+      description: 'เสี่ยวหลงเปาทอด กรอบนอก ฉ่ำใน',
+      tags: [{ label: 'เงินสด', type: 'cash' }],
+    },
+    {
+      id: 'hk17',
+      day: 1,
+      time: '14:15',
+      location: 'Wah Heung Yuen',
+      description: 'ร้านลุงเสื้อขาด หมูทอด local ฝั่งเกาลูน',
+      tags: [{ label: 'เงินสด', type: 'cash' }],
+    },
+    {
+      id: 'hk18',
+      day: 1,
+      time: '15:15',
+      location: 'Vision Bakery',
+      description: 'ข้ามฝั่งมาร้านเบเกอรี่ ทาร์ต ชา พักขา (Central)',
+      tags: [{ label: 'Octopus Card', type: 'card' }],
+    },
+    {
+      id: 'hk19',
+      day: 1,
+      time: '15:45',
+      location: 'Central & Sheung Wan',
+      description: 'Jenny Bakery, เดินถนนอาร์ต Hollywood Road, ไหว้เจ้าที่ Man Mo Temple, ดูงานคราฟท์ที่ PMQ',
+      tags: [{ label: 'เงินสด', type: 'cash' }],
+    },
+    {
+      id: 'hk20',
+      day: 1,
+      time: '17:15',
+      location: 'Kennedy Town',
+      description: 'เดินถ่ายรูปแบบฮิปๆ ที่สนามบาสริมทะเล Kennedy Town',
+      tags: [{ label: 'Octopus Card', type: 'card' }],
+    },
+    {
+      id: 'hk21',
+      day: 1,
+      time: '18:00',
+      location: 'Yat Lok Restaurant (一樂燒鵝)',
+      description: 'ร้านห่านย่างมิชลิน 1 ดาว',
+      tags: [{ label: 'เงินสด', type: 'cash' }],
+    },
+    {
+      id: 'hk22',
+      day: 1,
+      time: '19:30',
+      location: 'Victoria Peak (Sky Terrace)',
+      description: 'นั่งรถบัส No.15 ขึ้น Victoria Peak เพื่อชมวิวฮ่องกงช่วงเปลี่ยนสีและมืด',
+      tags: [{ label: 'ตั๋วสำหรับเข้าชม', type: 'ticket' }],
+    },
+    {
+      id: 'hk23',
+      day: 2,
+      time: '08:00',
+      location: 'Master Congee',
+      description: 'มื้อเช้า โจ๊กฮ่องกงแบบโบราณ, ปาท่องโก๋, ก๋วยเตี๋ยวหลอด',
+      tags: [{ label: 'เงินสด', type: 'cash' }],
+    },
+    {
+      id: 'hk24',
+      day: 2,
+      time: '10:00',
+      location: 'Hong Kong Disneyland',
+      description: 'เก็บเครื่องเล่นฮิต: World of Frozen, Grizzly, Mystic / ดูโชว์ Festival of Lion King',
+      tags: [{ label: 'ตั๋วสำหรับเข้าชม', type: 'ticket' }, { label: 'น้ำดื่ม', type: 'water' }, { label: 'PowerBank', type: 'powerbank' }],
+    },
+    {
+      id: 'hk25',
+      day: 2,
+      time: '20:15',
+      location: 'Disney Castle',
+      description: 'ชม Momentous Nighttime Spectacular โชว์พลุแสงสียามค่ำคืน',
+      tags: [],
+    },
+    {
+      id: 'hk26',
+      day: 3,
+      time: '07:00',
+      location: 'One Dim Sum',
+      description: 'ติ่มซำชื่อดังแถว Jordan',
+      tags: [{ label: 'เงินสด', type: 'cash' }],
+    },
+    {
+      id: 'hk27',
+      day: 3,
+      time: '08:00',
+      location: 'ทัวร์ไหว้ 4 วัด',
+      description: 'วัดเจ้าแม่กวนอิม รีพลัสเบย์, วัดฮองฮำ, วัดหวังต้าเซียน, วัดแชกงหมิว',
+      tags: [{ label: 'Octopus Card', type: 'card' }],
+    },
+    {
+      id: 'hk28',
+      day: 3,
+      time: '16:55',
+      location: 'สนานบิน HKG',
+      description: 'เดินทางกลับกรุงเทพมหานคร ถึง 19:00',
+      tags: [{ label: 'ตั๋วเครื่องบิน', type: 'ticket' }],
+    },
+  ],
+  outfits: [
+    {
+      id: '1',
+      day: 1,
+      dayName: 'วันที่ 1',
+      theme: 'Casual Travel',
+      imageUrl: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&h=600&fit=crop',
+    },
+    {
+      id: '2',
+      day: 1,
+      dayName: 'วันที่ 2',
+      theme: 'Street Fashion Central',
+      imageUrl: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=800&h=600&fit=crop',
+    },
+    {
+      id: '3',
+      day: 2,
+      dayName: 'วันที่ 3',
+      theme: 'Disney Magic',
+      imageUrl: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800&h=600&fit=crop',
+    },
+  ],
+  expenses: [
+    {
+      id: 'e1',
+      name: 'ตั๋วเครื่องบิน (ไป-กลับ)',
+      totalAmount: 18973,
+      paidBy: '1',
+      splitAmong: ['1', '2', '3', '4'],
+      amountPerPerson: 18973 / 4, // 4743.25
+      date: '2026-03-01',
+      category: 'เดินทาง',
+    },
+    {
+      id: 'e2',
+      name: 'โรงแรม Best Western Plus (3 คืน)',
+      totalAmount: 13292.24,
+      paidBy: '1',
+      splitAmong: ['1', '2', '3', '4'],
+      amountPerPerson: 13292.24 / 4, // 3323.06
+      date: '2026-03-01',
+      category: 'ที่พัก',
+    },
+    {
+      id: 'e3',
+      name: 'Octopus Card (คนละ 396฿)',
+      totalAmount: 1584,
+      paidBy: '1',
+      splitAmong: ['1', '2', '3', '4'],
+      amountPerPerson: 1584 / 4, // 396
+      date: '2026-03-22',
+      category: 'เดินทาง',
+    },
+    {
+      id: 'e4',
+      name: 'Ngong Ping 360 (ผู้ใหญ่ 3, เด็ก 1)',
+      totalAmount: 4343,
+      paidBy: '1',
+      splitAmong: ['1', '2', '3', '4'],
+      amountPerPerson: 4343 / 4,
+      date: '2026-03-22',
+      category: 'บัตรเข้าชม',
+    },
+    {
+      id: 'e5',
+      name: 'Peak Tram',
+      totalAmount: 1949,
+      paidBy: '1',
+      splitAmong: ['1', '2', '3', '4'],
+      amountPerPerson: 1949 / 4,
+      date: '2026-03-23',
+      category: 'บัตรเข้าชม',
+    },
+    {
+      id: 'e6',
+      name: 'Hong Kong Disneyland',
+      totalAmount: 13369.78,
+      paidBy: '1',
+      splitAmong: ['1', '2', '3', '4'],
+      amountPerPerson: 13369.78 / 4,
+      date: '2026-03-24',
+      category: 'บัตรเข้าชม',
+    },
+    {
+      id: 'e7',
+      name: 'ทัวร์ไหว้พระ 4 วัด + ส่งสนามบิน',
+      totalAmount: 13020,
+      paidBy: '1',
+      splitAmong: ['1', '2', '3', '4'],
+      amountPerPerson: 13020 / 4,
+      date: '2026-03-25',
+      category: 'เดินทาง',
+    },
+    {
+      id: 'e8',
+      name: 'ค่าน้ำหนักกระเป๋า โหลดใต้เครื่อง',
+      totalAmount: 5355.29,
+      paidBy: '1',
+      splitAmong: ['1', '2', '3', '4'],
+      amountPerPerson: 5355.29 / 4, // 1338.82
+      date: '2026-03-01',
+      category: 'เดินทาง',
+    },
+  ],
+  activityItems: [],
+};
+
+export function TripProvider({ children }: { children: ReactNode }) {
+  const { profile } = useUser();
+
+  const [tripData, setTripData] = useState<TripData>(() => {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      const mergedPeople = parsed.people ? parsed.people.map((p: Person) => {
+        const defaultPerson = defaultData.people.find((dp) => dp.id === p.id);
+        return { ...p, avatar: p.avatar || defaultPerson?.avatar };
+      }) : defaultData.people;
+
+      return {
+        ...parsed,
+        startDate: new Date(parsed.startDate),
+        people: mergedPeople,
+        activityItems: parsed.activityItems || defaultData.activityItems,
+      };
+    }
+    return defaultData;
+  });
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(tripData));
+  }, [tripData]);
+
+  const tripDataWithProfile = useMemo(() => {
+    if (!profile) return tripData;
+    const people = [...tripData.people];
+    people[0] = { ...people[0], name: profile.nickname, avatar: profile.avatarUrl };
+    return { ...tripData, people };
+  }, [tripData, profile]);
+
+  const addExpense = (expense: Omit<Expense, 'id'>) => {
+    const newExpense = {
+      ...expense,
+      id: Date.now().toString(),
+    };
+    setTripData((prev) => ({
+      ...prev,
+      expenses: [...prev.expenses, newExpense],
+    }));
+  };
+
+  const addActivity = (activity: Omit<Activity, 'id'>) => {
+    const newActivity = {
+      ...activity,
+      id: Date.now().toString(),
+    };
+    setTripData((prev) => ({
+      ...prev,
+      activities: [...prev.activities, newActivity],
+    }));
+  };
+
+  const addOutfit = (outfit: Omit<Outfit, 'id'>) => {
+    const newOutfit = {
+      ...outfit,
+      id: Date.now().toString(),
+    };
+    setTripData((prev) => ({
+      ...prev,
+      outfits: [...prev.outfits, newOutfit],
+    }));
+  };
+
+  const addActivityItem = (item: Omit<ActivityItem, 'id'>) => {
+    const newItem = { ...item, id: Date.now().toString() };
+    setTripData((prev) => ({ ...prev, activityItems: [...prev.activityItems, newItem] }));
+  };
+
+  const updateActivity = (id: string, updates: Partial<Activity>) => {
+    setTripData((prev) => ({
+      ...prev,
+      activities: prev.activities.map((activity) =>
+        activity.id === id ? { ...activity, ...updates } : activity
+      ),
+    }));
+  };
+
+  const deleteExpense = (id: string) => {
+    setTripData((prev) => ({
+      ...prev,
+      expenses: prev.expenses.filter((expense) => expense.id !== id),
+    }));
+  };
+
+  const getCurrentActivity = (): Activity | null => {
+    const now = new Date();
+    const tripStart = new Date(tripData.startDate);
+
+    // Calculate which day of the trip we're on
+    const daysDiff = Math.floor((now.getTime() - tripStart.getTime()) / (1000 * 60 * 60 * 24));
+    const currentDay = daysDiff + 1;
+
+    if (currentDay < 1) {
+      return null; // Trip hasn't started yet
+    }
+
+    const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+    const todayActivities = tripData.activities
+      .filter((a) => a.day === currentDay)
+      .sort((a, b) => a.time.localeCompare(b.time));
+
+    // Find the current or next activity
+    for (let i = 0; i < todayActivities.length; i++) {
+      if (currentTime <= todayActivities[i].time) {
+        return todayActivities[i];
+      }
+    }
+
+    // If we're past all activities today, return the last one
+    return todayActivities[todayActivities.length - 1] || null;
+  };
+
+  const getExpensesByPerson = (personId: string): Expense[] => {
+    return tripData.expenses.filter((expense) => expense.paidBy === personId);
+  };
+
+  const getTotalPaidByPerson = (personId: string): number => {
+    return tripData.expenses
+      .filter((expense) => expense.paidBy === personId)
+      .reduce((sum, expense) => sum + expense.totalAmount, 0);
+  };
+
+  const shiftActivities = (hours: number) => {
+    setTripData((prev) => ({
+      ...prev,
+      activities: prev.activities.map((activity) => {
+        const [hour, minute] = activity.time.split(':').map(Number);
+        const newHour = (hour + hours + 24) % 24;
+        return {
+          ...activity,
+          time: `${String(newHour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`,
+        };
+      }),
+    }));
+  };
+
+  const shiftDayActivities = (day: number, hours: number) => {
+    setTripData((prev) => ({
+      ...prev,
+      activities: prev.activities.map((activity) => {
+        if (activity.day !== day) return activity;
+
+        const [hour, minute] = activity.time.split(':').map(Number);
+        const newHour = (hour + hours + 24) % 24;
+        return {
+          ...activity,
+          time: `${String(newHour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`,
+        };
+      }),
+    }));
+  };
+
+  return (
+    <TripContext.Provider
+      value={{
+        tripData: tripDataWithProfile,
+        addExpense,
+        addActivity,
+        addOutfit,
+        addActivityItem,
+        updateActivity,
+        deleteExpense,
+        getCurrentActivity,
+        getExpensesByPerson,
+        getTotalPaidByPerson,
+        shiftActivities,
+        shiftDayActivities,
+      }}
+    >
+      {children}
+    </TripContext.Provider>
+  );
+}
+
+export function useTripContext() {
+  const context = useContext(TripContext);
+  if (!context) {
+    throw new Error('useTripContext must be used within TripProvider');
+  }
+  return context;
+}

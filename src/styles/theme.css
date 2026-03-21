@@ -1,0 +1,252 @@
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Typography Variables */
+  --text-h1: 41.06px;
+  --text-h2: 33.25px;
+  --text-h3: 27px;
+  --text-h4: 22px;
+  --text-base: 18px;
+  --text-label: 14.8px;
+  --text-label-caps: 12.24px;
+  --text-button-large: 18px;
+  --text-button-small: 14.8px;
+  
+  --font-family-primary: 'Prompt', sans-serif;
+  --font-weight-regular: 400;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+  
+  /* Orange · Light Grey · Warm White Color System */
+  /* Primary: #E36414  |  Background: #F6F6F6  |  Secondary: #E36414  |  Muted: #FFFAF5 */
+  --background: rgba(246, 246, 246, 1.00);
+  --foreground: rgba(62, 70, 91, 1.00);
+  --card: rgba(255, 255, 255, 1.00);
+  --card-foreground: rgba(62, 70, 91, 1.00);
+  --popover: rgba(62, 70, 91, 1.00);
+  --popover-foreground: rgba(255, 255, 255, 1.00);
+  --primary: rgba(227, 100, 20, 1.00);
+  --primary-foreground: rgba(255, 255, 255, 1.00);
+  --secondary: rgba(227, 100, 20, 1.00);
+  --secondary-foreground: rgba(255, 255, 255, 1.00);
+  --muted: rgba(255, 250, 245, 1.00);
+  --muted-foreground: rgba(138, 143, 168, 1.00);
+  --accent: rgba(227, 100, 20, 1.00);
+  --accent-foreground: rgba(255, 255, 255, 1.00);
+  --destructive: rgba(220, 38, 38, 1.00);
+  --destructive-foreground: rgba(255, 255, 255, 1.00);
+  --border: rgba(227, 100, 20, 0.15);
+  --input: rgba(255, 255, 255, 1.00);
+  --input-background: rgba(255, 255, 255, 1.00);
+  --ring: rgba(227, 100, 20, 0.25);
+  --elevation-sm: 0 2px 8px rgba(227, 100, 20, 0.07);
+  --chart-1: rgba(227, 100, 20, 1.00);
+  --chart-2: rgba(62, 70, 91, 1.00);
+  --chart-3: rgba(138, 143, 168, 1.00);
+  --chart-4: rgba(220, 38, 38, 1.00);
+  --chart-5: rgba(255, 183, 139, 1.00);
+  --radius: 8px;
+  --radius-button: 8px;
+  --radius-card: 12px;
+  --radius-badge: 6px;
+  --radius-tooltip: 4px;
+  --radius-checkbox: 4px;
+  --radius-toggle: 12px;
+  --sidebar: rgba(227, 100, 20, 1.00);
+  --sidebar-foreground: rgba(255, 255, 255, 1.00);
+  --sidebar-primary: rgba(255, 255, 255, 1.00);
+  --sidebar-primary-foreground: rgba(227, 100, 20, 1.00);
+  --sidebar-accent: rgba(255, 255, 255, 1.00);
+  --sidebar-accent-foreground: rgba(227, 100, 20, 1.00);
+  --sidebar-border: rgba(255, 255, 255, 0.12);
+  --sidebar-ring: rgba(255, 255, 255, 0.30);
+}
+
+.dark {
+  --background: rgba(30, 25, 20, 1.00);
+  --foreground: rgba(255, 249, 242, 1.00);
+  --card: rgba(42, 36, 28, 1.00);
+  --card-foreground: rgba(255, 249, 242, 1.00);
+  --popover: rgba(50, 44, 36, 1.00);
+  --popover-foreground: rgba(255, 249, 242, 1.00);
+  --primary: rgba(195, 91, 0, 1.00);
+  --primary-foreground: rgba(255, 255, 255, 1.00);
+  --secondary: rgba(255, 249, 242, 1.00);
+  --secondary-foreground: rgba(62, 70, 91, 1.00);
+  --muted: rgba(55, 48, 38, 1.00);
+  --muted-foreground: rgba(160, 155, 148, 1.00);
+  --accent: rgba(195, 91, 0, 1.00);
+  --accent-foreground: rgba(255, 255, 255, 1.00);
+  --destructive: rgba(220, 38, 38, 1.00);
+  --destructive-foreground: rgba(255, 255, 255, 1.00);
+  --border: rgba(70, 62, 50, 1.00);
+  --input: rgba(42, 36, 28, 1.00);
+  --input-background: rgba(42, 36, 28, 1.00);
+  --ring: rgba(195, 91, 0, 0.35);
+  --chart-1: rgba(195, 91, 0, 1.00);
+  --chart-2: rgba(255, 249, 242, 1.00);
+  --chart-3: rgba(160, 155, 148, 1.00);
+  --chart-4: rgba(220, 38, 38, 1.00);
+  --chart-5: rgba(100, 88, 72, 1.00);
+  --sidebar: rgba(22, 18, 14, 1.00);
+  --sidebar-foreground: rgba(255, 249, 242, 1.00);
+  --sidebar-primary: rgba(195, 91, 0, 1.00);
+  --sidebar-primary-foreground: rgba(255, 255, 255, 1.00);
+  --sidebar-accent: rgba(195, 91, 0, 1.00);
+  --sidebar-accent-foreground: rgba(255, 255, 255, 1.00);
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-ring: rgba(195, 91, 0, 0.35);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-input-background: var(--input-background);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+  --radius-xl: calc(var(--radius) + 6px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-family-primary);
+  }
+}
+
+/**
+ * Base typography. This is not applied to elements which have an ancestor with a Tailwind text class.
+ */
+@layer base {
+  :where(:not(:has([class*=" text-"]), :not(:has([class^="text-"])))) {
+    h1 {
+      font-family: var(--font-family-primary);
+      font-size: var(--text-h1);
+      font-weight: var(--font-weight-bold);
+      line-height: 1.5;
+    }
+
+    h2 {
+      font-family: var(--font-family-primary);
+      font-size: var(--text-h2);
+      font-weight: var(--font-weight-semibold);
+      line-height: 1.5;
+    }
+
+    h3 {
+      font-family: var(--font-family-primary);
+      font-size: var(--text-h3);
+      font-weight: var(--font-weight-extrabold);
+      line-height: 1.5;
+    }
+
+    h4 {
+      font-family: var(--font-family-primary);
+      font-size: var(--text-h4);
+      font-weight: var(--font-weight-extrabold);
+      line-height: 1.5;
+    }
+
+    p {
+      font-family: var(--font-family-primary);
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-regular);
+      line-height: 1.5;
+    }
+
+    label {
+      font-family: var(--font-family-primary);
+      font-size: var(--text-label);
+      font-weight: var(--font-weight-semibold);
+      line-height: 1.5;
+    }
+
+    button {
+      font-family: var(--font-family-primary);
+      font-size: var(--text-button-large);
+      font-weight: var(--font-weight-bold);
+      line-height: 1.5;
+    }
+
+    input {
+      font-family: var(--font-family-primary);
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-regular);
+      line-height: 1.5;
+    }
+  }
+}
+
+/* Typography utility classes for specific design system styles */
+@layer utilities {
+  .text-label-caps {
+    font-family: var(--font-family-primary);
+    font-size: var(--text-label-caps);
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.2048px;
+  }
+
+  .text-button-small {
+    font-family: var(--font-family-primary);
+    font-size: var(--text-button-small);
+    font-weight: var(--font-weight-extrabold);
+  }
+
+  .text-button-large {
+    font-family: var(--font-family-primary);
+    font-size: var(--text-button-large);
+    font-weight: var(--font-weight-bold);
+  }
+}
+
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.28s cubic-bezier(0.32, 0.72, 0, 1) both;
+}
