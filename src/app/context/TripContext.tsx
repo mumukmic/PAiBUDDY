@@ -82,7 +82,7 @@ const STORAGE_KEY = 'trip-planner-data-hk-v4';
 
 const defaultData: TripData = {
   tripName: 'Hong Kong 2026',
-  startDate: new Date('2026-03-21'),
+  startDate: new Date('2026-03-22'),
   people: [
     { id: '1', name: 'แม่', avatar: somchaiAvatar },
     { id: '2', name: 'ลูกนัท', avatar: somyingAvatar },
