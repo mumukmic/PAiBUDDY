@@ -93,7 +93,7 @@ const defaultData: TripData = {
     {
       id: 'hk1',
       day: 1,
-      time: '08:00',
+      time: '01:00',
       location: 'สนามบินสุวรรณภูมิ',
       description: 'ถึงสนามบินเตรียมตัวเช็คอิน โหลดกระเป๋า',
       tags: [
@@ -104,17 +104,6 @@ const defaultData: TripData = {
     {
       id: 'hk2',
       day: 1,
-      time: '10:40',
-      location: 'Take Off',
-      description: 'Safe fight~~~',
-      tags: [
-        { label: 'ตั๋วเครื่องบิน', type: 'ticket' },
-        { label: 'พาสปอร์ต', type: 'passport' }
-      ],
-    },
-    {
-      id: 'hk3',
-      day: 1,
       time: '14:40',
       location: 'สนามบิน HKG',
       description: 'ถึงสนามบิน HKG ผ่าน ตม. และรับกระเป๋า (~60 นาที)',
@@ -124,7 +113,7 @@ const defaultData: TripData = {
       ],
     },
     {
-      id: 'hk4',
+      id: 'hk3',
       day: 1,
       time: '15:40',
       location: 'Airport Bus Terminal',
@@ -132,7 +121,7 @@ const defaultData: TripData = {
       tags: [{ label: 'Octopus Card', type: 'card' }],
     },
     {
-      id: 'hk5',
+      id: 'hk4',
       day: 1,
       time: '16:00',
       location: 'Citygate Outlets',
@@ -140,7 +129,7 @@ const defaultData: TripData = {
       tags: [],
     },
     {
-      id: 'hk6',
+      id: 'hk5',
       day: 1,
       time: '16:35',
       location: 'Ngong Ping 360',
@@ -148,7 +137,7 @@ const defaultData: TripData = {
       tags: [{ label: 'ตั๋วสำหรับเข้าชม', type: 'ticket' }],
     },
     {
-      id: 'hk7',
+      id: 'hk6',
       day: 1,
       time: '17:05',
       location: 'Ngong Ping & Big Buddha',
@@ -156,7 +145,7 @@ const defaultData: TripData = {
       tags: [{ label: 'น้ำดื่ม', type: 'water' }],
     },
     {
-      id: 'hk8',
+      id: 'hk7',
       day: 1,
       time: '18:00',
       location: 'Ngong Ping 360 (ขาลง)',
@@ -164,7 +153,7 @@ const defaultData: TripData = {
       tags: [],
     },
     {
-      id: 'hk9',
+      id: 'hk8',
       day: 1,
       time: '18:55',
       location: 'Best Western Plus Hotel Kowloon',
@@ -172,7 +161,7 @@ const defaultData: TripData = {
       tags: [{ label: 'ที่พัก', type: 'other' }, { label: 'Octopus Card', type: 'card' }],
     },
     {
-      id: 'hk10',
+      id: 'hk9',
       day: 1,
       time: '20:00',
       location: 'Symphony of Lights',
@@ -180,7 +169,7 @@ const defaultData: TripData = {
       tags: [{ label: 'PowerBank', type: 'powerbank' }],
     },
     {
-      id: 'hk11',
+      id: 'hk10',
       day: 1,
       time: '20:30',
       location: 'Master Beef Shabu',
@@ -188,7 +177,7 @@ const defaultData: TripData = {
       tags: [{ label: 'เงินสด', type: 'cash' }],
     },
     {
-      id: 'hk12',
+      id: 'hk11',
       day: 2,
       time: '08:30',
       location: 'Log Ye Dim Sum Restaurant',
@@ -196,7 +185,7 @@ const defaultData: TripData = {
       tags: [{ label: 'เงินสด', type: 'cash' }],
     },
     {
-      id: 'hk13',
+      id: 'hk12',
       day: 2,
       time: '09:30',
       location: 'Nathan Road',
@@ -204,7 +193,7 @@ const defaultData: TripData = {
       tags: [{ label: 'น้ำดื่ม', type: 'water' }],
     },
     {
-      id: 'hk14',
+      id: 'hk13',
       day: 2,
       time: '10:15',
       location: 'K11 Art Mall',
@@ -212,7 +201,7 @@ const defaultData: TripData = {
       tags: [{ label: 'เงินสด', type: 'cash' }],
     },
     {
-      id: 'hk15',
+      id: 'hk14',
       day: 2,
       time: '12:00',
       location: 'Best Mart 360',
@@ -220,7 +209,7 @@ const defaultData: TripData = {
       tags: [{ label: 'เงินสด', type: 'cash' }],
     },
     {
-      id: 'hk16',
+      id: 'hk15',
       day: 2,
       time: '12:30',
       location: 'Rapidfootwear (Kwun Tong)',
@@ -228,7 +217,7 @@ const defaultData: TripData = {
       tags: [{ label: 'Octopus Card', type: 'card' }],
     },
     {
-      id: 'hk17',
+      id: 'hk16',
       day: 2,
       time: '13:30',
       location: 'Harbour City / Promenade',
@@ -236,7 +225,7 @@ const defaultData: TripData = {
       tags: [{ label: 'เงินสด', type: 'cash' }],
     },
     {
-      id: 'hk18',
+      id: 'hk17',
       day: 2,
       time: '15:15',
       location: 'Central & Sheung Wan',
@@ -244,7 +233,7 @@ const defaultData: TripData = {
       tags: [{ label: 'Octopus Card', type: 'card' }, { label: 'เงินสด', type: 'cash' }],
     },
     {
-      id: 'hk19',
+      id: 'hk18',
       day: 2,
       time: '17:15',
       location: 'Kennedy Town',
@@ -252,7 +241,7 @@ const defaultData: TripData = {
       tags: [{ label: 'Octopus Card', type: 'card' }],
     },
     {
-      id: 'hk20',
+      id: 'hk19',
       day: 2,
       time: '18:00',
       location: 'Yat Lok Restaurant',
@@ -260,7 +249,7 @@ const defaultData: TripData = {
       tags: [{ label: 'เงินสด', type: 'cash' }],
     },
     {
-      id: 'hk21',
+      id: 'hk20',
       day: 2,
       time: '18:50',
       location: 'Victoria Peak',
@@ -268,7 +257,7 @@ const defaultData: TripData = {
       tags: [{ label: 'ตั๋วสำหรับเข้าชม', type: 'ticket' }],
     },
     {
-      id: 'hk22',
+      id: 'hk21',
       day: 2,
       time: '21:30',
       location: 'Star Ferry',
@@ -276,7 +265,7 @@ const defaultData: TripData = {
       tags: [{ label: 'Octopus Card', type: 'card' }],
     },
     {
-      id: 'hk23',
+      id: 'hk22',
       day: 3,
       time: '08:00',
       location: 'Master Congee',
@@ -284,7 +273,7 @@ const defaultData: TripData = {
       tags: [{ label: 'เงินสด', type: 'cash' }],
     },
     {
-      id: 'hk24',
+      id: 'hk23',
       day: 3,
       time: '10:00',
       location: 'Hong Kong Disneyland',
@@ -296,7 +285,7 @@ const defaultData: TripData = {
       ],
     },
     {
-      id: 'hk25',
+      id: 'hk24',
       day: 3,
       time: '21:00',
       location: 'Best Western Plus Hotel Kowloon',
@@ -304,7 +293,7 @@ const defaultData: TripData = {
       tags: [{ label: 'Octopus Card', type: 'card' }],
     },
     {
-      id: 'hk26',
+      id: 'hk25',
       day: 4,
       time: '07:00',
       location: 'One Dim Sum',
@@ -312,7 +301,7 @@ const defaultData: TripData = {
       tags: [{ label: 'เงินสด', type: 'cash' }],
     },
     {
-      id: 'hk27',
+      id: 'hk26',
       day: 4,
       time: '08:00',
       location: 'ทัวร์ไหว้ 4 วัด',
@@ -320,7 +309,7 @@ const defaultData: TripData = {
       tags: [{ label: 'Octopus Card', type: 'card' }],
     },
     {
-      id: 'hk28',
+      id: 'hk27',
       day: 4,
       time: '16:55',
       location: 'สนามบิน HKG',
