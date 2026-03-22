@@ -93,7 +93,7 @@ const defaultData: TripData = {
     {
       id: 'hk1',
       day: 1,
-      time: '01:00',
+      time: '10:30',
       location: 'สนามบินสุวรรณภูมิ',
       description: 'ถึงสนามบินเตรียมตัวเช็คอิน โหลดกระเป๋า',
       tags: [
